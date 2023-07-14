@@ -1,22 +1,11 @@
 import db from './db.js';
+import lotes from '../../mocks/lotes.js';
+import {pesquisaLotePorNome} from '../database/querys.js';
 
-const insertTables = async () => {
+export const inserirLotes = async () => {
     try {
-        await inserirLotes();
-        await inserirBoletos();
-    } catch (error) {
-        console.log('Error: ', error);
-    }
-};
-
-const inserirLotes = async () => {
-    const data = {
-        nome: '17',
-        ativo: true,
-    };
-
-    try {
-        await db('lotes').insert(data);
+        await db('lotes').delete();
+        await db('lotes').insert(lotes);
         console.log('Lotes Inseridos com sucesso.');
     } catch (error) {
         console.error(error);
@@ -24,21 +13,38 @@ const inserirLotes = async () => {
 
 };
 
-const inserirBoletos = async () => {
-    const data = {
-        nome_sacado: 'MARCIA CARVALHO',
-        ativo: true,
-        valor: '128.00',
-        linha_digitavel: '123456123456123456',
-        id_lote: 1,
-    };
-
+export const inserirBoletos = async (data) => {
     try {
-        await db('boletos').insert(data);
-        console.log('Boletos Inseridos com sucesso.');
+        const _data = await Promise.all(await transformData(data));
+        try {
+            await db('boletos').insert(_data);
+            await db.destroy();
+            console.log('Boletos Inseridos com sucesso.');
+        } catch (error) {
+            db.destroy();
+            console.error(error);
+        }
+
     } catch (error) {
         console.error(error);
     }
 };
 
-export default insertTables;
+const transformData = (data) => {
+    return data.map(async (item) => {
+        const id_lote = await validLotes(item.unidade);
+        return {
+            nome_sacado: item.nome,
+            ativo: true,
+            id_lote,
+            valor: item.valor,
+            linha_digitavel: item.linha_digitavel,
+            criado_em: new Date(),
+        };
+    });
+};
+
+const validLotes = async (nome) => {
+    const [res] = await pesquisaLotePorNome(nome);
+    return res.id;
+};

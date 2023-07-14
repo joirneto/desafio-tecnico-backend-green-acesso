@@ -1,19 +1,19 @@
 import express from 'express';
 
-import createTables from './database/create-tables.js';
-import deleteTables from './database/delete-tables.js';
-import insertTables from './database/insert-tables.js';
+import initDB from './database/init.js';
 import boletosRoutes from './routes/boletosRoutes.js';
+import uploadRoutes from './routes/uploadRoutes.js';
 
 const app = express();
 app.use(express.json());
 
-await deleteTables();
-await createTables();
-await insertTables();
+if (await initDB()) {
+    app.use('/upload', uploadRoutes);
+    app.use('/boletos', boletosRoutes);
 
-app.use('/boletos', boletosRoutes);
-
-app.listen(8585, () => {
-    console.log('Servidor iniciado na porta 3000');
-});
+    app.listen(3000, () => {
+        console.log('Servidor iniciado na porta 3000');
+    });
+} else {
+    console.log('Erro na inicialização do DB. Reinicie a aplicação ou procure o Admin.');
+}
