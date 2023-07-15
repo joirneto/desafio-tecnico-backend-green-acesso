@@ -3,7 +3,6 @@ import {getAllBoletos, pdfBase64} from '../database/querys.js';
 const BoletosConstroller = {
     async getAll(req, res) {
         const filtros = req?.query;
-        console.log(filtros);
         const query = await getAllBoletos(filtros);
         if (filtros?.relatorio === '1') {
             try {

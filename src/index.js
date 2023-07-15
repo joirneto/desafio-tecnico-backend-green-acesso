@@ -9,8 +9,8 @@ const app = express();
 app.use(express.json());
 
 if (await initDB()) {
-    app.use('/upload', uploadRoutes);
-    app.use('/boletos', boletosRoutes);
+    app.use('/api/upload', uploadRoutes);
+    app.use('/api/boletos', boletosRoutes);
 
     app.listen(config.PORT, () => {
         console.log(`Servidor iniciado na porta ${config.PORT}`);

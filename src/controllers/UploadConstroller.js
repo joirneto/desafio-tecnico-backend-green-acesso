@@ -60,11 +60,13 @@ const UploadConstroller = {
                 const pageClientes = [];
 
                 for (const page of pdfData.Pages) {
+                    const randomNumber = Math.random();
+
                     const text = page.Texts.map(item => decodeURIComponent(item.R[0].T));
                     const nomeCliente = text.splice(':');
                     clientes.push(nomeCliente[0]);
                     const idCliente = await retrieveClienteNome(nomeCliente[0]);
-                    idClientes.push(idCliente);
+                    idClientes.push(idCliente ? idCliente : `${randomNumber}`);
                     pageClientes.push(page);
                 }
 
@@ -81,8 +83,6 @@ const UploadConstroller = {
     },
 };
 
-export default UploadConstroller;
-
 const retrieveClienteNome = async (nome) => {
     const [res] = await pesquisaClientePorNome(nome);
     return res?.id;
@@ -90,7 +90,6 @@ const retrieveClienteNome = async (nome) => {
 
 async function splitPDF(inputPath, idClientes) {
     try {
-        console.log(idClientes);
         const pdfBuffer = fs.readFileSync(inputPath);
         const pdfDoc = await PDFDocument.load(pdfBuffer);
         const pageCount = pdfDoc.getPageCount();
@@ -110,3 +109,5 @@ async function splitPDF(inputPath, idClientes) {
         console.log('Ocorreu um erro:', error);
     }
 }
+
+export default UploadConstroller;
