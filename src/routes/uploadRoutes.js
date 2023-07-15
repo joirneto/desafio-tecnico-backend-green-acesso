@@ -7,6 +7,7 @@ const upload = multer({dest: 'uploads/'});
 
 const uploadRoutes = express.Router();
 
-uploadRoutes.post('/', upload.single('file'), UploadConstroller.upload);
+uploadRoutes.post('/csv', upload.single('file'), UploadConstroller.uploadCSV);
+uploadRoutes.post('/pdf', upload.single('file'), UploadConstroller.uploadPDF);
 
 export default uploadRoutes;

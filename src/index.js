@@ -1,5 +1,6 @@
 import express from 'express';
 
+import config from './config.js';
 import initDB from './database/init.js';
 import boletosRoutes from './routes/boletosRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
@@ -11,8 +12,8 @@ if (await initDB()) {
     app.use('/upload', uploadRoutes);
     app.use('/boletos', boletosRoutes);
 
-    app.listen(3000, () => {
-        console.log('Servidor iniciado na porta 3000');
+    app.listen(config.PORT, () => {
+        console.log(`Servidor iniciado na porta ${config.PORT}`);
     });
 } else {
     console.log('Erro na inicialização do DB. Reinicie a aplicação ou procure o Admin.');

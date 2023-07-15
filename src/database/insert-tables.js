@@ -18,10 +18,8 @@ export const inserirBoletos = async (data) => {
         const _data = await Promise.all(await transformData(data));
         try {
             await db('boletos').insert(_data);
-            await db.destroy();
             console.log('Boletos Inseridos com sucesso.');
         } catch (error) {
-            db.destroy();
             console.error(error);
         }
 
